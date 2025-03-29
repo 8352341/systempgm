@@ -103,3 +103,34 @@
 
 - **단어, 줄, 문자 세기**  
   - `wc`: 파일 내 줄(`-l`), 단어(`-w`), 문자(`-c`)의 개수를 셉니다.
+
+
+---
+  ## 실습: C파일언어 만들어서 실행하기
+  
+**1.cat로 파일 만들기**
+ - practice.c파일 만들기
+   ```
+   cat > practice
+   ```
+![cat](image/cat.png)
+   
+
+**2. 리눅스에 gcc 설치하기**
+
+   - gcc 설치하기
+   ```
+   sudo apt install gcc
+   ```
+
+**3.c파일 실행하기**
+ - 컴파일 하기
+   ```
+   gcc practice.c -o practice
+   ```
+- 실행
+   ```
+   ./practice
+   ```
+
+   ![return](image/return.png)
