@@ -111,7 +111,7 @@
 **1.cat로 파일 만들기**
  - practice.c파일 만들기
    ```
-   cat > practice
+   cat > practice.c
    ```
 ![cat](image/cat.png)
    
