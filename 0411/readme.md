@@ -1,5 +1,3 @@
-# 5장 쉘과 명령어 사용
-
 ## 목차
 1.  [쉘 소개](#shell-intro)
 2.  [쉘의 기능](#shell-functions)
