@@ -1,15 +1,17 @@
 ## 목차
 
-  * [제6장: 프로세스](https://www.google.com/search?q=%23%25EC%25A0%259C6%25EC%259E%25A5-%25ED%2594%2584%25EB%25A1%259C%25EC%2584%25B8%25EC%258A%25A4-%25EC%259A%2594%25EC%2595%25BD)
-  * [제7장: 인터넷과 서버](https://www.google.com/search?q=%23%25EC%25A0%259C7%25EC%259E%25A5-%25EC%259D%25B8%25ED%2584%25B0%25EB%2584%25B7%25EA%25B3%25BC-%25EC%2584%259C%25EB%25B2%2584-%25EC%259A%2594%25EC%2595%25BD)
-  * [제8장: 파일 유틸리티](https://www.google.com/search?q=%23%25EC%25A0%259C8%25EC%259E%25A5-%25ED%258C%258C%25EC%259D%25BC-%25EC%259C%25A0%25ED%258B%25B8%25EB%25A6%25AC%25ED%258B%25B0-%25EC%259A%2594%25EC%2595%25BD)
-  * [제9장: 유틸리티](https://www.google.com/search?q=%23%25EC%25A0%259C9%25EC%259E%25A5-%25EC%259C%25A0%25ED%258B%25B8%25EB%25A6%25AC%25ED%258B%25B0-%25EC%259A%2594%25EC%2595%25BD)
-  * [제10장: Bash 쉘 스크립트](https://www.google.com/search?q=%23%25EC%25A0%259C10%25EC%259E%25A5-bash-%25EC%2589%2598-%25EC%258A%25A4%25ED%2581%25AC%25EB%25A6%25BD%25ED%258A%25B8-%25EC%259A%2594%25EC%2595%25BD)
-  * [제11장: 프로그래밍 환경](https://www.google.com/search?q=%23%25EC%25A0%259C11%25EC%259E%25A5-%25ED%2594%2584%25EB%25A1%259C%25EA%25B7%25B8%25EB%259E%2598%25EB%25B0%258D-%25ED%2599%2598%25EA%25B2%25BD-%25EC%259A%2594%25EC%2595%25BD)
+* [프로세스](#process)
+* [인터넷과서버](#internet-server)
+* [파일 유틸리티](#file-utility)
+* [유틸리티](#utility)
+* [Bash 쉘 스크립트](#bash-scripts)
+* [프로그래밍 환경](#programming-env)
+
 
 -----
 
-## 제6장: 프로세스
+<a id="process"></a>
+### 프로세스
 
   * **프로세스 (Process)**
       * **정의**: 실행 중인 프로그램, 고유 PID.
@@ -39,7 +41,8 @@
 
 -----
 
-## 제7장: 인터넷과 서버
+<a id="internet-server"></a>
+### 인터넷과서버
 
   * **네트워크 구성 (Network Configuration)**
       * **LAN**: 근거리 통신망.
@@ -74,7 +77,8 @@
 
 -----
 
-## 제8장: 파일 유틸리티
+<a id="file-utility"></a>
+### 파일유틸리티
 
   * **파일 속성으로 파일 찾기 (find)**
       * **기본**: `find 경로 -name 파일명`.
@@ -97,7 +101,9 @@
 
 -----
 
-## 제9장: 유틸리티
+
+<a id="utility"></a>
+### 유틸리티
 
   * **명령어 스케줄링**
       * **cron (주기적)**: `crontab 파일` (등록), `crontab -e` (편집), `crontab -l` (목록), `crontab -r` (삭제).
@@ -128,7 +134,8 @@
 
 -----
 
-## 제10장: Bash 쉘 스크립트
+<a id="bash-scripts"></a>
+### Bash쉘스크립트
 
   * **Bash 쉘 소개**
       * **정의**: Bourne-again shell, 리눅스/macOS 기본 쉘.
@@ -167,7 +174,8 @@
 
 -----
 
-## 제11장: 프로그래밍 환경
+<a id="programming-env"></a>
+### 프로그래밍환경
 
   * **프로그램 작성과 컴파일**
       * **편집기 (gedit)**: GUI 텍스트 편집기, 구문 강조.
