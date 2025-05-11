@@ -20,6 +20,7 @@
   - [`stat` 구조체](#stat-structure)
 - [파일 사용 권한 (File Permissions)](#file-permissions)
   - [`st_mode` 필드 상세](#st-mode-field)
+- [실습](#practice)
 
 ---
 
@@ -177,3 +178,208 @@ struct stat {
 - **파일 타입**: S_ISREG, S_ISDIR, S_ISCHR, S_ISBLK, S_ISFIFO, S_ISLNK, S_ISSOCK 매크로로 검사
 - **접근 권한 비트**: S_IRUSR, S_IWUSR, S_IXUSR, S_IRGRP, S_IWGRP, S_IXGRP, S_IROTH, S_IWOTH, S_IXOTH
 - **특수 비트**: S_ISUID(SetUID), S_ISGID(SetGID), S_ISVTX(스티키 비트)
+
+---
+
+<a id="practice"></a>
+## 실습
+  -ls –l 명령어처럼 파일의 모든 상태 정보를 프린트하는 list2.c파일을 생성
+
+  ```c
+  #include <stdio.h>
+  #include <stdlib.h>
+  #include <sys/stat.h>
+  #include <sys/types.h>
+  #include <unistd.h>
+  #include <dirent.h>     // 디렉토리 처리를 위해
+  #include <string.h>
+  #include <pwd.h>        // 사용자 이름 출력을 위해 (getpwuid)
+  #include <grp.h>        // 그룹 이름 출력을 위해 (getgrgid)
+  #include <time.h>       // 시간 정보 포맷팅을 위해 (strftime, localtime)
+  #include <errno.h>      // 오류 처리를 위해 (perror)
+  
+  // 함수 프로토타입 선언
+  void printStat(const char *pathname, const char *filename, const struct stat *fileStat);
+  char type(mode_t mode);
+  void perm(mode_t mode, char *permStr);
+  void list_directory_contents(const char *dirname);
+  
+  /**
+   * @brief 메인 프로그램: 명령줄 인자로 주어진 파일 또는 디렉토리의 정보를 출력합니다.
+   * 인자가 없으면 현재 디렉토리의 내용을 출력합니다.
+   */
+  int main(int argc, char *argv[]) {
+      struct stat fileStat;
+  
+      if (argc == 1) {
+          // 인자가 없으면 현재 디렉토리(".")의 내용을 나열
+          list_directory_contents(".");
+      } else {
+          for (int i = 1; i < argc; i++) {
+              if (lstat(argv[i], &fileStat) == -1) { // lstat: 심볼릭 링크 자체의 정보를 가져옴
+                  perror(argv[i]); // 파일/디렉토리 접근 오류 시 메시지 출력
+                  continue;
+              }
+  
+              // 인자가 디렉토리인지 확인
+              if (S_ISDIR(fileStat.st_mode)) {
+                  if (argc > 2 && i > 1) { // 여러 인자가 주어지고, 이전 인자도 디렉토리였다면 줄바꿈 추가
+                      printf("\n");
+                  }
+                  printf("%s:\n", argv[i]);
+                  list_directory_contents(argv[i]);
+              } else {
+                  // 파일 또는 심볼릭 링크 등
+                  printStat(argv[i], argv[i], &fileStat);
+              }
+          }
+      }
+      return 0;
+  }
+  
+  /**
+   * @brief 지정된 디렉토리의 내용물을 `ls -l` 형식으로 출력합니다.
+   * @param dirname 디렉토리 경로
+   */
+  void list_directory_contents(const char *dirname) {
+      DIR *dp;
+      struct dirent *dentry;
+      struct stat fileStat;
+      char fullpath[1024]; // 경로를 포함한 파일 이름
+  
+      if ((dp = opendir(dirname)) == NULL) {
+          perror(dirname);
+          return;
+      }
+  
+      while ((dentry = readdir(dp)) != NULL) {
+          // "." 이나 ".." 은 일반적으로 ls -l 시 상세정보를 출력하지 않으므로,
+          // 여기서는 모든 항목을 보여주도록 합니다. (필요시 주석 처리)
+          // if (strcmp(dentry->d_name, ".") == 0 || strcmp(dentry->d_name, "..") == 0) {
+          //     continue;
+          // }
+  
+          // 전체 경로 생성
+          if (strcmp(dirname, "/") == 0) { // 루트 디렉토리인 경우
+               snprintf(fullpath, sizeof(fullpath), "/%s", dentry->d_name);
+          } else {
+              snprintf(fullpath, sizeof(fullpath), "%s/%s", dirname, dentry->d_name);
+          }
+  
+  
+          if (lstat(fullpath, &fileStat) == -1) {
+              perror(fullpath);
+              continue;
+          }
+          printStat(fullpath, dentry->d_name, &fileStat); // 파일 이름만 전달 (경로 제외)
+      }
+      closedir(dp);
+  }
+  
+  
+  /**
+   * @brief 파일 상태 정보를 `ls -l` 형식으로 출력합니다.
+   * @param pathname 파일의 전체 경로 (심볼릭 링크 대상 확인용)
+   * @param filename 출력할 파일 이름
+   * @param fileStat 파일 상태 정보를 담고 있는 stat 구조체 포인터
+   */
+  void printStat(const char *pathname, const char *filename, const struct stat *fileStat) {
+      char typeChar = type(fileStat->st_mode);
+      char permStr[11]; // "rwxrwxrwx\0" + S_ISUID 등 고려
+      perm(fileStat->st_mode, permStr);
+  
+      // 사용자 이름 가져오기
+      struct passwd *pw = getpwuid(fileStat->st_uid);
+      const char *userName = (pw != NULL) ? pw->pw_name : "unknown";
+  
+      // 그룹 이름 가져오기
+      struct group *gr = getgrgid(fileStat->st_gid);
+      const char *groupName = (gr != NULL) ? gr->gr_name : "unknown";
+  
+      // 시간 정보 포맷팅
+      char timeStr[80];
+      time_t now = time(NULL);
+      struct tm *mod_tm = localtime(&(fileStat->st_mtime));
+      struct tm *now_tm = localtime(&now);
+  
+      // 파일 수정 시간이 현재 연도와 같으면 "월 일 시간", 다르면 "월 일 연도" 형식
+      if (mod_tm->tm_year == now_tm->tm_year) {
+          strftime(timeStr, sizeof(timeStr), "%b %e %H:%M", mod_tm); // 예: May  7 15:30
+      } else {
+          strftime(timeStr, sizeof(timeStr), "%b %e  %Y", mod_tm); // 예: Dec 25  2023
+      }
+  
+  
+      printf("%c%s %2ld %-8s %-8s %8lld %s %s",
+             typeChar,
+             permStr,
+             fileStat->st_nlink,  // 하드 링크 수
+             userName,            // 소유자 이름
+             groupName,           // 그룹 이름
+             (long long)fileStat->st_size, // 파일 크기 (lld로 long long 캐스팅)
+             timeStr,             // 최종 수정 시간
+             filename);           // 파일 이름
+  
+      // 심볼릭 링크인 경우, 가리키는 대상 출력
+      if (typeChar == 'l') {
+          char linkTarget[256];
+          ssize_t len = readlink(pathname, linkTarget, sizeof(linkTarget) - 1);
+          if (len != -1) {
+              linkTarget[len] = '\0';
+              printf(" -> %s", linkTarget);
+          }
+      }
+      printf("\n");
+  }
+  
+  /**
+   * @brief 파일 타입을 나타내는 문자를 반환합니다.
+   * @param mode 파일의 st_mode 값
+   * @return 파일 타입 문자 ('-', 'd', 'l', 'c', 'b', 'p', 's')
+   */
+  char type(mode_t mode) {
+      if (S_ISREG(mode)) return '-';  // 일반 파일
+      if (S_ISDIR(mode)) return 'd';  // 디렉토리
+      if (S_ISLNK(mode)) return 'l';  // 심볼릭 링크
+      if (S_ISCHR(mode)) return 'c';  // 문자 장치 파일
+      if (S_ISBLK(mode)) return 'b';  // 블록 장치 파일
+      if (S_ISFIFO(mode)) return 'p'; // FIFO (파이프)
+      if (S_ISSOCK(mode)) return 's'; // 소켓
+      return '?'; // 알 수 없는 타입
+  }
+  
+  /**
+   * @brief 파일 사용 권한을 "rwxrwxrwx" 형식의 문자열로 변환합니다.
+   * @param mode 파일의 st_mode 값
+   * @param permStr 권한 문자열을 저장할 버퍼 (최소 10바이트 크기)
+   */
+  void perm(mode_t mode, char *permStr) {
+      strcpy(permStr, "---------"); // 기본값으로 초기화
+  
+      // 사용자(Owner) 권한
+      if (mode & S_IRUSR) permStr[0] = 'r';
+      if (mode & S_IWUSR) permStr[1] = 'w';
+      if (mode & S_IXUSR) permStr[2] = 'x';
+  
+      // 그룹(Group) 권한
+      if (mode & S_IRGRP) permStr[3] = 'r';
+      if (mode & S_IWGRP) permStr[4] = 'w';
+      if (mode & S_IXGRP) permStr[5] = 'x';
+  
+      // 기타(Others) 권한
+      if (mode & S_IROTH) permStr[6] = 'r';
+      if (mode & S_IWOTH) permStr[7] = 'w';
+      if (mode & S_IXOTH) permStr[8] = 'x';
+  
+      // 특수 권한 (SetUID, SetGID, Sticky bit)
+      if (mode & S_ISUID) permStr[2] = (permStr[2] == 'x') ? 's' : 'S';
+      if (mode & S_ISGID) permStr[5] = (permStr[5] == 'x') ? 's' : 'S'; // ls에서는 's' 또는 'l'로 표시되기도 함
+      if (mode & S_ISVTX) permStr[8] = (permStr[8] == 'x') ? 't' : 'T';
+  
+      permStr[9] = '\0'; // 문자열 종료
+  }
+
+  ```
+
+
+
