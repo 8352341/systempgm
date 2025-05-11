@@ -183,8 +183,17 @@ struct stat {
 
 <a id="practice"></a>
 ## 실습
-  -ls –l 명령어처럼 파일의 모든 상태 정보를 프린트하는 list2.c파일을 생성
+  -ls –l 명령어처럼 파일의 모든 상태 정보를 프린트하는 list2.c파일을 ai를 사용해 생성
 
+  제미니를 사용해 코드 생성후 파일을 만들어 실행
+  
+  ![Gemini](image/제미니.png)
+  ---
+  ![Run](image/실습이미지.png)
+  ---
+  
+  제미니를 사용하여 만든 코드 내용
+  ---
   ```c
   #include <stdio.h>
   #include <stdlib.h>
