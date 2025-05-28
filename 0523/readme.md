@@ -1,4 +1,4 @@
-# 9장 프로세스 제어 요약
+# 9장 프로세스 제어
 
 ## 9.1 프로세스 생성
 
@@ -43,7 +43,7 @@ int main() {
 
 **실행 결과:**
 
-<!-- fork1.c 실행 결과 사진을 여기에 삽입 -->
+![fork1](image/fork1.png)
 
 ---
 
@@ -75,7 +75,7 @@ int main() {
 
 **실행 결과:**
 
-<!-- fork2.c 실행 결과 사진을 여기에 삽입 -->
+![fork2](image/fork2.png)
 
 ---
 
@@ -114,7 +114,7 @@ int main() {
 
 **실행 결과:**
 
-<!-- fork3.c 실행 결과 사진을 여기에 삽입 -->
+![fork3](image/fork3.png)
 
 ---
 
@@ -149,7 +149,7 @@ int main() {
 
 **실행 결과:**
 
-<!-- forkwait.c 실행 결과 사진을 여기에 삽입 -->
+![forkwait](image/forkwait.png)
 
 ---
 
@@ -198,4 +198,4 @@ int main() {
 
 **실행 결과:**
 
-<!-- waitpid.c 실행 결과 사진을 여기에 삽입 -->
+![waitpid](image/waitpid.png)
